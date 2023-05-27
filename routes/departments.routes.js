@@ -34,24 +34,36 @@ router.get("/departments/:id", (req, res) => {
 
 router.post("/departments", (req, res) => {
   const { name } = req.body;
-  req.db.collection("departments").insertOne({ name: name }, (err) => {
-    if (err) res.status(500).json({ message: err });
-    else res.json({ message: "OK" });
-  });
+  if (!name) res.status(409).json({ message: "You must pass name value." });
+  else
+    req.db.collection("departments").insertOne({ name: name }, (err) => {
+      if (err) res.status(500).json({ message: err });
+      else res.json({ message: "OK" });
+    });
 });
 
 router.put("/departments/:id", (req, res) => {
   const { name } = req.body;
-  req.db
-    .collection("departments")
-    .updateOne(
-      { _id: ObjectId(req.params.id) },
-      { $set: { name: name } },
-      (err) => {
+
+  if (!name) res.status(409).json({ message: "You must pass name value." });
+  else
+    req.db
+      .collection("departments")
+      .findOne({ _id: ObjectId(req.params.id) }, (err, data) => {
         if (err) res.status(500).json({ message: err });
-        else res.json({ message: "OK" });
-      }
-    );
+        else if (!data) res.status(404).json({ message: "Not found" });
+        else
+          req.db
+            .collection("departments")
+            .updateOne(
+              { _id: ObjectId(req.params.id) },
+              { $set: { name: name } },
+              (err) => {
+                if (err) res.status(500).json({ message: err });
+                else res.json({ message: "OK" });
+              }
+            );
+      });
 });
 
 router.delete("/departments/:id", (req, res) => {
