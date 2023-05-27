@@ -20,7 +20,6 @@ app.use((req, res) => {
   res.status(404).send({ message: "Not found..." });
 });
 
-// connects our backend code with the database
 mongoose.connect("mongodb://localhost:27017/companyDB", {
   useNewUrlParser: true,
 });
