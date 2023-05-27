@@ -21,6 +21,7 @@ router.get("/employees/random", (req, res) => {
       else res.json(data[0]);
     });
 });
+
 router.get("/employees/:id", (req, res) => {
   req.db
     .collection("employees")
