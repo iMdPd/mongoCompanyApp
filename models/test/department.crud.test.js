@@ -1,3 +1,4 @@
+const { afterEach } = require("mocha");
 const Department = require("../department.model");
 const expect = require("chai").expect;
 const mongoose = require("mongoose");
@@ -40,5 +41,15 @@ describe("Department", () => {
     });
   });
 
+  describe("Creating data", () => {
+    it('should insert new document witch "insertOne" method', async () => {
+      const department = new Department({ name: "Department #1" });
+      await department.save();
+      expect(department.isNew).to.be.false;
 
+      after(async () => {
+        await Department.deleteMany();
+      });
+    });
+  });
 });
