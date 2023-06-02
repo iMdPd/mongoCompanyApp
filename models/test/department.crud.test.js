@@ -52,4 +52,52 @@ describe("Department", () => {
       });
     });
   });
+
+  describe("Update data", () => {
+    beforeEach(async () => {
+      const testDepOne = new Department({ name: "Department #1" });
+      await testDepOne.save();
+
+      const testDepTwo = new Department({ name: "Department #2" });
+      await testDepTwo.save();
+    });
+
+    afterEach(async () => {
+      await Department.deleteMany();
+    });
+
+    it('should properly update one document with "updateOne" method', async () => {
+      await Department.updateOne(
+        { name: "Department #1" },
+        { $set: { name: "UpdatedDepartment #1" } }
+      );
+      const updatedDepartment = Department.findOne({
+        name: "UpdatedDepartment #1",
+      });
+
+      expect(updatedDepartment).not.to.be.null;
+    });
+
+    it('should properly update one document with "save" method', async () => {
+      const department = await Department.findOne({ name: "Department #1" });
+      department.name = "UpdatedDepartment #1";
+      await department.save();
+
+      const updatedDepartment = Department.findOne({
+        name: "UpdatedDepartment #1",
+      });
+
+      expect(updatedDepartment).not.to.be.null;
+    });
+
+    it('should properly update multiple documents with "updateMany" method', async () => {
+      await Department.updateMany({}, { $set: { name: "UpdatedDepartment" } });
+
+      const updatedDepartments = await Department.find({
+        name: "UpdatedDepartment",
+      });
+
+      expect(updatedDepartments.length).to.be.equal(2);
+    });
+  });
 });
