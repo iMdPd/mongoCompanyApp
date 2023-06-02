@@ -1,4 +1,3 @@
-const { afterEach } = require("mocha");
 const Department = require("../department.model");
 const expect = require("chai").expect;
 const mongoose = require("mongoose");
@@ -16,12 +15,16 @@ describe("Department", () => {
   });
 
   describe("Reading data", () => {
-    before(async () => {
+    beforeEach(async () => {
       const testDepOne = new Department({ name: "Department #1" });
       await testDepOne.save();
 
       const testDepTwo = new Department({ name: "Department #2" });
       await testDepTwo.save();
+    });
+
+    afterEach(async () => {
+      await Department.deleteMany();
     });
 
     it('should return all the data with "find" method', async () => {
@@ -34,10 +37,6 @@ describe("Department", () => {
       const department = await Department.findOne({ name: "Department #1" });
       const expectedName = "Department #1";
       expect(department.name).to.be.equal(expectedName);
-    });
-
-    after(async () => {
-      await Department.deleteMany();
     });
   });
 
