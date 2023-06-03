@@ -113,4 +113,45 @@ describe("Employee CRUD", () => {
       expect(updatedEmployee.length).to.be.equal(2);
     });
   });
+  describe("Removing data", () => {
+    beforeEach(() => createTestData());
+
+    afterEach(async () => {
+      await Employee.deleteMany();
+    });
+
+    it("should properly remove document with 'deleteOne' method", async () => {
+      await Employee.deleteOne({
+        firstName: "FirstName #1",
+      });
+
+      const removedEmployee = await Employee.findOne({
+        firstName: "FirstName #1",
+      });
+
+      expect(removedEmployee).to.be.null;
+    });
+
+    it("should properly remove document with 'remove' method", async () => {
+      const employee = await Employee.findOne({
+        firstName: "FirstName #1",
+      });
+
+      employee.remove();
+
+      const removedEmployee = await Employee.findOne({
+        firstName: "FirstName #1",
+      });
+
+      expect(removedEmployee).to.be.null;
+    });
+
+    it("should properly remove multiple documents with 'deleteMany' method", async () => {
+      await Employee.deleteMany();
+
+      const employee = await Employee.find();
+
+      expect(employee.length).to.be.equal(0);
+    });
+  });
 });
