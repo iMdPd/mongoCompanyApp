@@ -70,4 +70,47 @@ describe("Employee CRUD", () => {
       await Employee.deleteMany();
     });
   });
+
+  describe("Updating data", () => {
+    beforeEach(() => createTestData());
+
+    afterEach(async () => {
+      await Employee.deleteMany();
+    });
+
+    it("should properly update docment with 'updateOne' method", async () => {
+      await Employee.updateOne(
+        { firstName: "FirstName #1" },
+        { $set: { firstName: "UpdatedFirstName #1" } }
+      );
+
+      const updatedEmployee = await Employee.findOne({
+        firstName: "UpdatedFirstName #1",
+      });
+      expect(updatedEmployee).not.to.be.null;
+    });
+
+    it("should properly update docment with 'save' method", async () => {
+      const employee = await Employee.findOne();
+
+      employee.firstName = "UpdatedFirstName #1";
+      await employee.save();
+
+      const updatedEmployee = await Employee.findOne({
+        firstName: "UpdatedFirstName #1",
+      });
+
+      expect(updatedEmployee).not.to.be.null;
+    });
+
+    it("should properly update multiple docments with 'updateMany' method", async () => {
+      await Employee.updateMany({}, { $set: { firstName: "updatedData!" } });
+
+      const updatedEmployee = await Employee.find({
+        firstName: "updatedData!",
+      });
+
+      expect(updatedEmployee.length).to.be.equal(2);
+    });
+  });
 });
